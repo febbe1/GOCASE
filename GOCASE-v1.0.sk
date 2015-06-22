@@ -1939,20 +1939,18 @@ on mine stone:
 		if chance of 1%:
 			if player can hold chest:
 				give player chest named "&5Skrzynka %loop-value%"
-				send "&5%player% , &c&lznalazles skrzynke &6%loop-value%&c! &cZnajdz, badz kup  klucz i otworz skrzynke aby wolosowac nagrode!" to player 
-				stop
+				send "&5%player% , &c&lznalazles skrzynke &6%loop-value%&c! &cZnajdz, badz kup  klucz i otworz skrzynke aby wolosowac nagrode!" to player 				
 			else:
 				give player chest named "&5Skrzynka %loop-value%"
 				send "&5%player% , &c&lznalazles skrzynke &6%loop-value%&c! &cZnajdz, badz kup  klucz i otworz skrzynke aby wolosowac nagrode!" to player  
-				send "&6** &cPrzedmiot zostal upuszczony na ziemie, z powodu braku miejsca w ekwipunku!"
-				stop
+				send "&6** &cPrzedmiot zostal upuszczony na ziemie, z powodu braku miejsca w ekwipunku!"				
 		if chance of 1%:
+			if {GOASE::case.%loop-value%.key} is false:
+				stop
 			if player can hold Tripwire Hook:
 				give player Tripwire Hook named "&5Klucz do skrzynki %loop-value%"
-				send "&5%player% , &c&lznalazles klucz do skrzynki &6%loop-value%&c! &cZnajdz, badz kup  odpowiednia skrzynke i otworz ja aby wolosowac nagrode!" to player  
-				stop
+				send "&5%player% , &c&lznalazles klucz do skrzynki &6%loop-value%&c! &cZnajdz, badz kup  odpowiednia skrzynke i otworz ja aby wolosowac nagrode!" to player  				
 			else:
 				give player Tripwire Hook named "&5Klucz do skrzynki %loop-value%"
 				send "&5%player% , &c&lznalazles klucz do skrzynki &6%loop-value%&c! &cZnajdz, badz kup  odpowiednia skrzynke i otworz ja aby wolosowac nagrode!" to player 
 				send "&6** &cPrzedmiot zostal upuszczony na ziemie, z powodu braku miejsca w ekwipunku!"
-				stop
