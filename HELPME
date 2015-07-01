@@ -1,0 +1,72 @@
+A więc tak: najpierw wyjaśnijmy sobię parę pojęć:
+	- tick: jakby to powiedzieć... Gdy uruchamiasz skrzynke co chwile wydaje się dzwięk (pop, pop, pop itd.). Każdy taki "pop" nazwyany jest tickiem. Narazie to trudne ale z czasem...
+	- slot: jest to  takie 'okienko' w skrzynce począwszy na 0 i kończąc na 26
+	- sound: narazie tego jeszcze nie dodałem, ale niedługo będziesz mógł zmienić ten "pop" na dźwiek jaki chcesz
+Dobra więc zaczynamy!
+Na początek otwórz notatnik...
+STOP!
+NIE te badziewia typu nottanik systemowy, microsoft world, worldpad, paint. Najlepiej NOTEPAD++
+Więc, mamy otworzony notatnik. Jest pusto, ale razem to zapełnimy (jakoś).
+Każdy skrypt odnosi się do jakieś skrzynki. Musimy ją na początek zadeklarować:
+declarecase(<NAZWA TWOJEJ SKRZYNKI>);
+Pamiętaj, że zadeklarowana skrzynka musi wpierw istnieć.
+Przykład: declarecase(CHROMA2);
+Standardowo skrzynka ma 25 tick-ów. Możesz to zmienić:
+setticks(<liczba ticków>);
+Przykład: setticks(30);
+Teraz zapisujemy plik. Jak?
+	- Kliknij Plik>Zapisz jako...
+	- Przejdź do folderu "plugins/GOCASE/scripts"
+	- Zapisz swój plik o tak "<nazwa twojego skryptu>.gcs"
+Końcówka skryptu jest ważna bo innaczej nie zostanie on załadowany.
+Teraz w grze wpisz "/case ls <nazwa twego skryptu>"
+Załadowało? (Jeśli nie zjedź na sam dół strony.) Teraz wpisz "/casesimulator <skrzynka>"
+Brawo! Zauważ, że teraz nie ma 25 tick-ów ale jest ich 30!
+Jest jescze smutna wiadomość: chciałem zrobić zmiane szbkości ze skryptu, ale wait mnie nie lubi i się nie udało. Musisz niestety sam zedytować to w skrypcie ;c (linia 135)
+Czy znudziły ci sie te czarne kafelki u góry podczas losowania?
+Teraz możemy to zmienić. Wejdź w swój skrypt.
+setslot(<slot>).tick(<tick>).to(<przedmiot>);
+Trochę zawiłe, wiem. Zamiast <slot> dajemy slot który ma być podmieniony, zamiast tick, to dajemy tick przy którym przedmiot ma się zmienić, no i <przedmiot> to chyba wiadomo.
+Uwaga, jeżeli w ticku 1 i w slocie 3 dasz np. kamień, to w następnych tickach go nie będzie. To się co chwile resetuje.
+Przykład
+setslot(1).tick(1).to(purple stained glass pane);
+setslot(1).tick(2).to(purple stained glass pane);
+setslot(1).tick(3).to(purple stained glass pane);
+setslot(1).tick(4).to(purple stained glass pane);
+setslot(1).tick(5).to(purple stained glass pane);
+setslot(1).tick(6).to(purple stained glass pane);
+setslot(1).tick(7).to(purple stained glass pane);
+setslot(1).tick(8).to(purple stained glass pane);
+setslot(1).tick(9).to(purple stained glass pane);
+setslot(1).tick(10).to(purple stained glass pane);
+setslot(1).tick(11).to(purple stained glass pane);
+setslot(1).tick(12).to(purple stained glass pane);
+setslot(1).tick(13).to(purple stained glass pane);
+setslot(1).tick(14).to(purple stained glass pane);
+setslot(1).tick(15).to(purple stained glass pane);
+setslot(1).tick(16).to(purple stained glass pane);
+setslot(1).tick(17).to(purple stained glass pane);
+setslot(1).tick(18).to(purple stained glass pane);
+setslot(1).tick(19).to(purple stained glass pane);
+setslot(1).tick(20).to(purple stained glass pane);
+setslot(1).tick(21).to(purple stained glass pane);
+setslot(1).tick(22).to(purple stained glass pane);
+setslot(1).tick(23).to(purple stained glass pane);
+setslot(1).tick(24).to(purple stained glass pane);
+setslot(1).tick(25).to(purple stained glass pane);
+setslot(1).tick(26).to(purple stained glass pane);
+setslot(1).tick(27).to(purple stained glass pane);
+setslot(1).tick(28).to(purple stained glass pane);
+setslot(1).tick(29).to(purple stained glass pane);
+setslot(1).tick(30).to(purple stained glass pane);
+Teraz zapisz swój skrypt i ponownie wpisz "/case ls <nazwa twego skryptu>"
+Załadowało? (Jeśli nie zjedź na sam dół strony.) Teraz wpisz "/casesimulator <skrzynka>"
+Stało się! Twoja skrzynka przez wszystkie ticki miała piękny fioletowy kafelek w 2 okienku.
+To tyle niestety, ale jak mówiłem dodam jescze inne rzeczy.
+Pokombinuj, mam nadzieje że coś zrozumiałeś, pa!
+
+Identyfikator błędów:
+	-"Zadeklarowana skrzynka nie istnieje" - nic dodać nic ująć, skrzynka którą podałeś... poprostu nie ma jej na serwerze
+	-"Nieznane wyrazenie" - coś zrobiłeś nie tak... sprawdź czy są znaki ";", "(" oraz ")"
+	
+
