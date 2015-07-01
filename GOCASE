@@ -3,18 +3,20 @@
 # kodzie poniżej (tylko za zgodą autora) ---------------------# 
 #---Zezwalam na edycje wiadomości i kodu na potrzeby własne---#
 #------------------------GOCASE Global Elite Edition Alpha-------------------------#
-method "chck":
-	set {_v} to "1.0"
+method "chck" {text}:
+	set {_v} to arg{1};
 	set {_l} to result of connect to "https://raw.githubusercontent.com/febbe1/GOCASE/master/Version"
 	if {_v} is not {_l}:
-		send "[&6GOCASE&R]Aktualizowanie skryptu..."
-		delete file "plugins/Skript/scripts/%name of script%.sk"
-		download from "https://raw.githubusercontent.com/febbe1/GOCASE/master/GOCASE" to "plugins/Skript/scripts/%name of script%.sk"
+		send "[&6GOCASE&R]Aktualizowanie skryptu..." to console
+		df "plugins/Skript/scripts/%script name%.sk"
+		download from "https://raw.githubusercontent.com/febbe1/GOCASE/master/GOCASE" to "plugins/Skript/scripts/%script name%.sk"
 		console command "casereload"
+		stop
+	send "[&6GOCASE&R]Korzystasz z najnowszej wersji!" to console
 method "getlist" {player}:
 	set {_player} to arg{1};
 	set {_num} to 0
-	open chest with 6 rows named "&6&l** &2&lLISTA SKRZYNEK" to player
+	open chest with 6 rows named "&6&l** &2&lLISTA SKRZYNEK" to {_player}
 	loop {GOCASE::cases::*}:							
 		wait 2 ticks
 		format slot {_num} of {_player} with 1 of chest named "&5SKRZYNKA %loop-value%" to close then run "caseilist %{_player}% %loop-value%"
@@ -505,6 +507,8 @@ command /itemlore [<text>]:
 			stop				
 on load:
 	send "[&6GOCASE&r] Laduje..." to console
+	set {_c} to "1.0"
+	function "chck" {{_c}};
 	send "[&6GOCASE&r] Skrypt gotowy do uzycia! Enjoy! //febbe" to console
 	broadcast "&6**&c&lSkrypt na skrzynki zostal przeladowany!"
 	if folder "plugins/GOCASE/" doesn't exists:
@@ -513,8 +517,6 @@ on load:
 		create folder "plugins/GOCASE/cases"
 	if folder "plugins/GOCASE/scripts" doesn't exists:
 		create folder "plugins/GOCASE/scripts"
-	if folder "plugins/GOCASE/settings" doesn't exists:
-		create folder "plugins/GOCASE/settings"
 on unload:
 	send "[&6GOCASE&r] Wylaczam..." to console
 	send "[&6GOCASE&r] Dziekuje za korzystanie! //febbe" to console
