@@ -62,6 +62,8 @@ method "load" {text}:
 			set {_ticks} to {_s} parsed as number
 			send {_ticks} to console
 			set {GOCASE::case.%{_case}%.ticks} to {_ticks}
+		else if {_text} contains "":
+			set {_l} to null
 		else:
 			return "&4Blad w skrypcie &6%arg{1};%.gcs&4 - nieznane wyrazenie &6linia %{_line}%,(%{_text}%)";
 			stop
