@@ -1,0 +1,624 @@
+#------------------------GOCASE Global Elite Edition Alpha-------------------------#
+#---Zakazuje publicznego udostępniania oraz zarabianiu na ----#
+# kodzie poniżej (tylko za zgodą autora) ---------------------# 
+#---Zezwalam na edycje wiadomości i kodu na potrzeby własne---#
+#------------------------GOCASE Global Elite Edition Alpha-------------------------#
+method "chck":
+	set {_v} to "1.0"
+	set {_l} to result of connect to "https://raw.githubusercontent.com/febbe1/GOCASE/master/Version"
+	if {_v} is not {_l}:
+		send "[&6GOCASE&R]Aktualizowanie skryptu..."
+		delete file "plugins/Skript/scripts/%name of script%.sk"
+		download from "https://raw.githubusercontent.com/febbe1/GOCASE/master/GOCASE" to "plugins/Skript/scripts/%name of script%.sk"
+		console command "casereload"
+method "getlist" {player}:
+	set {_player} to arg{1};
+	set {_num} to 0
+	open chest with 6 rows named "&6&l** &2&lLISTA SKRZYNEK" to player
+	loop {GOCASE::cases::*}:							
+		wait 2 ticks
+		format slot {_num} of {_player} with 1 of chest named "&5SKRZYNKA %loop-value%" to close then run "caseilist %{_player}% %loop-value%"
+		add 1 to {_num}
+method "load" {text}:
+	set {_value} to content of file "plugins/GOCASE/scripts/%arg{1};%.gcs"
+	set {_bracket} to result of connect to "https://raw.githubusercontent.com/febbe1/GOCASE/master/bracket"
+	set {_lines::*} to {_value} split at ";"
+	set {_line} to 0
+	loop {_lines::*}:
+		add 1 to {_line}
+		set {_text} to loop-value		
+		if {_text} contains "declarecase(":
+			replace all "declarecase(" and ")" with "" in {_text}
+			if {GOCASE::case.%{_text}%} is not set:
+				set {_text} to loop-value				
+				return "&4Blad w skrypcie &6%arg{1};%.gcs&4 - zadeklarowana skrzynka nie istnieje &6linia %{_line}%, (%{_text}%)";
+				stop
+			set {_case} to {_text}
+		else if {_text} contains "setslot(" and ").tick(" and ").to(":
+			set {_fi} to first index of "setslot(" in {_text}
+			set {_s} to subtext of {_text} from character ({_fi}) to character (length of {_text})
+			set {_si} to first index of ").tick" in {_s}
+			set {_slot} to subtext of {_text} from character ({_fi}) to character ({_si})
+			replace all "setslot(" and " " with "" in {_slot}
+			replace all "setslot(%{_slot}%)" with "" in {_text}
+			set {_fi} to first index of ".tick(" in {_text}
+			set {_s} to subtext of {_s} from character ({_fi}) to character (length of {_text})
+			set {_si} to first index of ").to" in {_text}
+			set {_tick} to subtext of {_text} from character ({_fi}) to character ({_si})
+			replace all ".tick(" and ")" and " " with "" in {_tick}
+			replace all ".tick(%{_tick}%)" with "" in {_text}			
+			replace all ".to(" and ")" with "" in {_text}
+			set {_item} to {_text}
+			set {GOCASE::case.%{_case}%.setslot.%{_tick}%.%{_slot}%} to {_item} parsed as item
+			add {_slot} to {GOCASE::case.%{_case}%.setslot.%{_tick}%.slots::*}
+			wait 1 tick
+		else if {_text} contains "setticks(" and ")":
+			set {_fi} to first index of "setticks(" in {_text}
+			set {_si} to first index of ")" in {_text}
+			set {_s} to subtext of {_text} from character ({_fi}) to character ({_si})
+			replace all "(" and " " and ")" with "" in {_s}	
+			set {_ticks} to {_s} parsed as number
+			send {_ticks} to console
+			set {GOCASE::case.%{_case}%.ticks} to {_ticks}
+		else:
+			return "&4Blad w skrypcie &6%arg{1};%.gcs&4 - nieznane wyrazenie &6linia %{_line}%,(%{_text}%)";
+			stop
+		return "&6*&c&lPomyslnie przeladowano skrypt &6%arg{1};%";
+method "open" {text and text and player}:
+	set {_player} to arg{3};
+	set {_case} to arg{2};
+	open chest with 3 rows named "&6&l** &a&lSKRZYNKA %{_case}%" to {_player}
+	SET {GOCASE::casename.%{_player}%} to {_case}
+	SET {GOCASE::wait4.%{_player}%} to true
+	wait 2 tick
+	format slot 4 of {_player} with 1 of Powered Rail to close
+	format slot 22 of {_player} with 1 of Powered Rail to close
+	set {_num} to 0
+	loop 27 times:
+		if {_num} is  0 or 1 or 2 or 3 or 5 or 6 or 7 or 8 or 18 or 19 or 20 or 21 or 23 or 24 or 25 or 26:
+			format slot {_num} of {_player} with 1 of Black Stained Glass Pane to close
+		add 1 to {_num}
+	set {GOCASE::%{_player}%.1} to random element out of {GOCASE::case.%{_case}%::*}
+	format slot 9 of {_player} with 1 of {GOCASE::%{_player}%.1} to close
+	set {GOCASE::%{_player}%.2} to random element out of {GOCASE::case.%{_case}%::*}
+	format slot 10 of {_player} with 1 of {GOCASE::%{_player}%.2} to close
+	set {GOCASE::%{_player}%.3} to random element out of {GOCASE::case.%{_case}%::*}
+	format slot 11 of {_player} with 1 of {GOCASE::%{_player}%.3} to close
+	set {GOCASE::%{_player}%.4} to random element out of {GOCASE::case.%{_case}%::*}
+	format slot 12 of {_player} with 1 of {GOCASE::%{_player}%.4} to close
+	set {GOCASE::%{_player}%.5} to random element out of {GOCASE::case.%{_case}%::*}
+	format slot 13 of {_player} with 1 of {GOCASE::%{_player}%.5} to close
+	set {GOCASE::%{_player}%.6} to random element out of {GOCASE::case.%{_case}%::*}
+	format slot 14 of {_player} with 1 of {GOCASE::%{_player}%.6} to close
+	set {GOCASE::%{_player}%.7} to random element out of {GOCASE::case.%{_case}%::*}
+	format slot 15 of {_player} with 1 of {GOCASE::%{_player}%.7} to close
+	set {GOCASE::%{_player}%.8} to random element out of {GOCASE::case.%{_case}%::*}
+	format slot 16 of {_player} with 1 of {GOCASE::%{_player}%.8} to close
+	set {GOCASE::%{_player}%.9} to random element out of {GOCASE::case.%{_case}%::*}
+	format slot 17 of {_player} with 1 of {GOCASE::%{_player}%.9} to close
+	loop {GOCASE::case.%{_case}%.ticks} times:
+		set {_num} to 0
+		set {_tick} to loop-number
+		loop 27 times:
+			if {_num} is 0 or 1 or 2 or 3 or 5 or 6 or 7 or 8 or 18 or 19 or 20 or 21 or 23 or 24 or 25 or 26:
+				if {GOCASE::case.%{_case}%.setslot.%{_tick}%.%{_num}%} is set:					
+					format slot {_num} of {_player} with {GOCASE::case.%{_case}%.setslot.%{_tick}%.%{_num}%} to close
+				else:
+					format slot {_num} of {_player} with 1 of Black Stained Glass Pane to close
+			add 1 to {_num}
+		set {GOCASE::%{_player}%.1} to {GOCASE::%{_player}%.2}
+		format slot 9 of {_player} with 1 of {GOCASE::%{_player}%.1} to close
+		set {GOCASE::%{_player}%.2} to {GOCASE::%{_player}%.3}
+		format slot 10 of {_player} with 1 of {GOCASE::%{_player}%.2} to close
+		set {GOCASE::%{_player}%.3} to {GOCASE::%{_player}%.4}
+		format slot 11 of {_player} with 1 of {GOCASE::%{_player}%.3} to close
+		set {GOCASE::%{_player}%.4} to {GOCASE::%{_player}%.5}
+		format slot 12 of {_player} with 1 of {GOCASE::%{_player}%.4} to close
+		set {GOCASE::%{_player}%.5} to {GOCASE::%{_player}%.6}
+		format slot 13 of {_player} with 1 of {GOCASE::%{_player}%.5} to close
+		set {GOCASE::%{_player}%.6} to {GOCASE::%{_player}%.7}
+		format slot 14 of {_player} with 1 of {GOCASE::%{_player}%.6} to close
+		set {GOCASE::%{_player}%.7} to {GOCASE::%{_player}%.8}
+		format slot 15 of {_player} with 1 of {GOCASE::%{_player}%.7} to close
+		set {GOCASE::%{_player}%.8} to {GOCASE::%{_player}%.9}
+		format slot 16 of {_player} with 1 of {GOCASE::%{_player}%.8} to close
+		set {GOCASE::%{_player}%.9} to random element out of {GOCASE::case.%{_case}%::*}
+		if chance of 90%:
+			loop {GOCASE::rare::*}:
+				if loop-value is {GOCASE::%{_player}%.9}:
+					set {GOCASE::%{_player}%.9} to random element out of {GOCASE::case.%{_case}%::*}
+		format slot 17 of {_player} with 1 of {GOCASE::%{_player}%.9} to close
+		if loop-number is smaller than 20:
+			wait 0.3 seconds
+		else if loop-number is not higher than 24:			
+			wait 1 second
+		else:			
+			wait 1.5 second
+		play raw sound "random.pop" at {_player} with pitch 1.5 volume 1
+	play raw sound "mob.endermen.portal" at {_player} with pitch 0.001 volume 1
+	delete {GOCASE::wait4.%{_player}%}
+	close {_player}'s inventory
+	if arg{1}; is "real":
+		if {_player} can hold {GOCASE::%{_player}%.5}:
+			give {_player} {GOCASE::%{_player}%.5}
+		else:
+			drop {GOCASE::%{_player}%.5} at {_player}
+			send "&6**&lPrzedmiot zostal upuszczony na ziemie!" to {_player}
+		send "&6**&c&lGratulacje, sprawdz co wygrales!" to {_player}
+	delete {GOCASE::%{_player}%.1}
+	delete {GOCASE::%{_player}%.2}
+	delete {GOCASE::%{_player}%.3}
+	delete {GOCASE::%{_player}%.4}
+	delete {GOCASE::%{_player}%.5}
+	delete {GOCASE::%{_player}%.6}
+	delete {GOCASE::%{_player}%.7}
+	delete {GOCASE::%{_player}%.8}
+	delete {GOCASE::%{_player}%.9}
+	delete {GOCASE::casename.%{_player}%}					
+	stop
+command /case [<text>] [<text>] [<text>] [<player>]:
+	permission: GOCASE.admin
+	permission message: &6** &c&lNie znaleziono komendy!
+	trigger:			
+		if arg 1 isn't set:
+			send "&6------------&5GOCASE &AADMINPANEL&6---------------" to player
+			send "&6/case - &bglowna komenda"
+			send "&6/case create <nazwa> [<Tu dajesz czy nie potrzebuje klucza (false)>] - &btworzysz case'a"
+			send "&6/case remove <nazwa> - &busuwasz case'a"
+			send "&6/case list - &blista case'ow"
+			send "&6/case edit <nazwa> - &bedytujesz case'a"
+			send "&6/case give <case/key> <nazwa skrzynki> <gracz> -&bdajesz skrzynke/klucz graczowi"
+			send "&6/casesimulator <nazwaskrzynki> -&b symulujesz skrzynke!"				
+			send "&6/casereload - &b przeladowywujesz skrypt"
+			send "&6/case rare add - &c*ZBUGOWANE*&b dodaje itemek w reku do listy rzadszych (trudniej je wylosowac)"
+			send "&6/case rare remove - &c*ZBUGOWANE*&b usuwa itemek w reku z listy rzadszych"
+			send "&6------------&5GOCASE &BGlobal Elite Edition&6---------------"
+			send "&6/case export <nazwaskrzynki> - &bdana skrzynka zostanie zapisana do pliku &6*skrzynka*.gc"
+			send "&6/case import <nazwapliku> - &bdany plik ze skrzynka zostanie zaimportowany"
+			send "&6------------&5GOCASE &AADMINPANEL&6---------------"
+			stop
+		if arg 1 is "create":
+			if executor is console:
+				send "[&6GOCASE&R] Ta komenda jest dostepna tylko w grze!" to console
+				stop
+			if arg 2 is set:
+				if {GOCASE::case.%uncoloured arg 2%} is set:
+					send "&6**&c&lTa skrzynka juz istnieje!"
+					stop
+				set {GOCASE::case.%arg 2%} to arg 2
+				add {GOCASE::case.%arg 2%} to {GOCASE::cases::*}
+				set {_x} to random integer between 0 and 10000
+				set {_y} to 255
+				set {_z} to random integer between 1 and 10000
+				set {GOCASE::r.%player%} to location at {_x}, {_y}, {_z}
+				set block at {GOCASE::r.%player%} to chest
+				set block 1 meters east block at {GOCASE::r.%player%} to chest
+				set {GOCASE::casename.%player%} to arg 2
+				open the inventory of the block at {GOCASE::r.%player%} to the player
+				set {GOCASE::wait.%player%} to true
+				set {GOCASE::case.%arg 2%.ticks} to 25
+				if arg 3 is "false":					
+					set {GOCASE::case.%arg 2%.key} to false
+				stop
+			else:
+				send "&6**&c&lZle podane argumenty! ( Poprawnie /case create <nazwa>)"
+				stop
+		if arg 1 is "remove":
+			if executor is not player:
+				send "[&6GOCASE&R] Ta komenda jest dostepna tylko w grze!" to executor
+				stop
+			if arg 2 is set:
+				if arg 3 isn't set:
+					if {GOCASE::case.%arg 2%} is set:
+						remove {GOCASE::case.%arg 2%} from {GOCASE::cases::*}
+						delete {GOCASE::case.%arg 2%::*}
+						delete {GOCASE::case.%arg 2%}
+						send "&6**&c&l SKrzynka usunieta pomyslnie!"
+						stop
+					else:
+						send "&6**&l&cNie ma takiej skrzynki!"
+						stop
+				else:
+					send "&6**&c&lZle podane argumenty! ( Poprawnie /case remove <nazwa>)"
+					stop
+			else:
+				send "&6**&c&lZle podane argumenty! ( Poprawnie /case remove <nazwa>)"
+				stop
+		if arg 1 is "list":
+			if arg 2 is not set:
+				if arg 3 is not set:
+					set {_player} to player
+					function "getlist" {{_player}};
+					stop
+				else:
+					send "&6**&c&lZle podane argumenty! ( Poprawnie /case list)"
+					stop
+			else:
+				send "&6**&c&lZle podane argumenty! ( Poprawnie /case list)"
+				stop
+		if arg 1 is "give":
+			if arg 2 is "case":
+				if arg 3 is set:
+					if arg 4 is set:						
+						if {GOCASE::case.%arg 3%} is set:
+							give chest named "&5Skrzynka %arg 3%" to arg 4
+							send "&6**&c&lDano skrzynke graczowi &6&l%arg 4%&c&l!"
+							stop
+						else:
+							send "&6**&l&cNie ma takiej skrzynki!"
+							stop
+					else:
+						send "&6**&c&lZle podane argumenty! ( Poprawnie /case give <case/key> <nazwa skrzynki> <gracz>)"
+						stop
+				else:
+					send "&6**&c&lZle podane argumenty! ( Poprawnie /case give <case/key> <nazwa skrzynki> <gracz>)"
+					stop
+			if arg 2 is "key":
+				if arg 3 is set:
+					if arg 4 is set:
+						if {GOCASE::case.%arg 3%} is set:
+							give Tripwire Hook named "&5Klucz do skrzynki %arg 3%" to arg 4
+							send "&6**&c&lDano klucz graczowi &6&l%arg 4%&c&l!"
+						else:
+							send "&6**&l&cNie ma takiej skrzynki!"
+							stop
+					else:
+						send "&6**&c&lZle podane argumenty! ( Poprawnie /case give <case/key> <nazwa skrzynki> <gracz>)"
+						stop
+				else:
+					send "&6**&c&lZle podane argumenty! ( Poprawnie /case give <case/key> <nazwa skrzynki> <gracz>)"
+					stop
+			else:
+				send "&6**&c&lZle podane argumenty! ( Poprawnie /case give <case/key> <nazwa skrzynki> <gracz>)"
+				stop
+		if arg 1 is "edit":
+			if executor is console:
+				send "[&6GOCASE&R] Ta komenda jest dostepna tylko w grze!" to console
+				stop
+			if arg 2 is set:
+				if arg 3 is not set:
+					if {GOCASE::case.%arg 2%} is set:
+						set {_x} to random integer between 0 and 10000
+						set {_y} to 255
+						set {_z} to random integer between 1 and 10000
+						set {GOCASE::r.%player%} to location at {_x}, {_y}, {_z}
+						set block at {GOCASE::r.%player%} to chest
+						set block 1 meters east block at {GOCASE::r.%player%} to chest
+						set {GOCASE::casename.%player%} to arg 2
+						loop {GOCASE::case.%arg 2%::*}:
+							add loop-value to inventory of the block at {GOCASE::r.%player%}
+						open the inventory of the block at {GOCASE::r.%player%} to the player
+						set {GOCASE::wait.%player%} to true
+						clear {GOCASE::case.%arg 2%::*}
+					else:
+						send "&6**&l&cNie ma takiej skrzynki!"
+						stop
+				else:
+					send "&6**&c&lZle podane argumenty! ( Poprawnie /case edit <nazwa skrzynki> )"
+					stop
+			else:
+				send "&6**&c&lZle podane argumenty! ( Poprawnie /case edit <nazwa skrzynki>)"
+				stop
+		if arg 1 is "export":
+			if {GOCASE::case.%arg 2%} is set:
+				if file "plugins/GOCASE/cases/%arg 2%.gc" doesn't exists:
+					set {_tool} to player's tool
+					set {_bracket} to result of connect to "https://raw.githubusercontent.com/febbe1/GOCASE/master/bracket" 
+					wf "on load:" to "plugins/GOCASE/cases/%arg 2%.sk"
+					wf "	set {GOCASE::case.%arg 2%} to %{_bracket}%%arg 2%%{_bracket}%" to "plugins/GOCASE/cases/%arg 2%.sk"
+					wf "	add {GOCASE::case.%arg 2%} to {GOCASE::cases::*}" to "plugins/GOCASE/cases/%arg 2%.sk"
+					if {GOCASE::case.%arg 2%.key} is false:
+						wf "	set {GOCASE::case.%arg 2%} to %{_bracket}%%arg 2%%{_bracket}%" to "plugins/GOCASE/cases/%arg 2%.sk"
+					wf "	loop all players:" to "plugins/GOCASE/cases/%arg 2%.sk"
+					wf "		if loop-player is {GOCASE::importer}:" to "plugins/GOCASE/cases/%arg 2%.sk"
+					loop {GOCASE::case.%arg 2%::*}:
+						set player's tool to loop-value
+						if lore of player's tool is "":
+							wf "			set {_i} to loop-player's tool" to "plugins/GOCASE/cases/%arg 2%.sk"
+							wf "			set loop-player's tool to %player's tool%" to "plugins/GOCASE/cases/%arg 2%.sk"
+							wf "			add %data value of player's tool% to the data value of loop-player's tool" to "plugins/GOCASE/cases/%arg 2%.sk"
+							wf "			add loop-player's tool to {GOCASE::case.%arg 2%::*}" to "plugins/GOCASE/cases/%arg 2%.sk" 
+						else:
+							wf "			set {_i} to loop-player's tool" to "plugins/GOCASE/cases/%arg 2%.sk"
+							wf "			set loop-player's tool to %player's tool% with lore %{_bracket}%%lore of player's tool%%{_bracket}%" to "plugins/GOCASE/cases/%arg 2%.sk"
+							wf "			add %data value of player's tool% to the data value of loop-player's tool" to "plugins/GOCASE/cases/%arg 2%.sk"
+							wf "			add loop-player's tool to {GOCASE::case.%arg 2%::*}" to "plugins/GOCASE/cases/%arg 2%.sk"
+							wf "			set {GOCASE::case.%arg 2%.ticks} to %{GOCASE::case.%arg 2%.ticks}%" to "plugins/GOCASE/cases/%arg 2%.sk"
+					wf "			set loop-player's tool to {_i}" to "plugins/GOCASE/cases/%arg 2%.sk"
+					create file "plugins/GOCASE/cases/%arg 2%.gc"
+					obfuscate file "plugins/GOCASE/cases/%arg 2%.sk" to file "plugins/GOCASE/cases/%arg 2%.gc" with power 7
+					delete file "plugins/GOCASE/cases/%arg 2%.sk"
+					send "&6*&c&lSkrzynka zapisana w pliku &6'plugins/GOCASE/cases/%arg 2%.gc'"
+					set player's tool to {_tool}
+					stop
+				send "&6*&c&lPodany plik (&6%arg 2%.gc&c&l) juz istnieje"
+				stop
+			send "&6*&c&lPodana skrzynka nie istnieje"
+			stop
+		if arg 1 is "import":
+			set {_name} to arg 2
+			replace all ".gc"  with "" in {_name}
+			if file "plugins/GOCASE/cases/%{_name}%.gc" doesn't exists: 
+				send "&6&c&l*Podany plik &6%arg 2%.gc&c&l nie istnieje"
+				stop
+			if {GOCASE::case.%arg 2%} is set:
+				send "&6*&c&lPodana skrzynia juz istnieje"
+				stop
+			set {GOCASE::importer} to player
+			load obfuscated file "plugins/GOCASE/cases/%arg 2%.gc" by power 7
+			send "&6*&c&lSkrzynka &6%{_name}%&c&l zostala zaimportowana"
+			clear {GOCASE::importer}
+			stop
+		if arg 1 is "rare":
+			if executor is console:
+				send "[&6GOCASE&R] Ta komenda jest dostepna tylko w grze!" to console
+				stop 
+			if arg 2 is "add":
+				if player's tool is not air:
+					if {GOCASE::rare::*} contains player's tool:
+						send "&6**&c&lTen itemek jest juz na liscie!"
+						stop
+					add player's tool to {GOCASE::rare::*}
+					send "&6**&C&LDodano do listy!"
+					stop
+				else:
+					send "&6**&C&LNieprawidlowy przedmiot!"
+					stop
+			if arg 2 is "remove":
+				if player's tool is not air:
+					if {GOCASE::rare::*} contains player's tool:
+						remove player's tool from {GOCASE::rare::*}
+						send "&6**&C&LUsunieto z listy!"
+						stop
+					send "&6**&C&LNa liscie nie ma takiego itemku!"
+					stop
+				else:
+					send "&6**&C&LNieprawidlowy przedmiot!"
+					stop
+		if arg 1 is "loadscript" or "ls":
+			if arg 2 is "all":
+				set {_list::*} to files in "plugins/GOCASE/scripts"
+				set {_num} to 0
+				loop {_list::*}:
+					set {_text} to loop-value
+					replace all ".gcs" with "" in {_text}
+					set {_r} to return of function "load" {{_text}}; 
+					add 1 to {_num}
+				send {_r}
+				send "&6*&c&lPrzeladowane GOCASE-skrypty: &6%{_num}%"
+				stop
+			set {_text} to arg 2
+			replace all ".gcs" with "" in {_text}
+			if file "plugins/GOCASE/scripts/%{_text}%.gcs" doesn't exists:
+				send "&6*&c&lNie znaleziono pliku &6%{_text}%.gcs&c&l w folderze &6plugins/GOCASE/scripts&c&l!"
+				stop
+			set {_r} to return of function "load" {{_text}};
+			send {_r}
+#Komenda dla graczy bez permisji#
+command /caselist:
+	trigger:
+		set {_player} to player
+		function "getlist" {{_player}};
+#Case simulator dostępny jest dla wszystkich#
+command /casesimulator [<text>]:
+	executable by: players
+	trigger:
+		loop {GOCASE::cases::*}:
+			if arg is set:
+				if {GOCASE::case.%arg%} is set:
+					if loop-value is arg:
+						send "&6**&c&lZa 15 sekund nastapi otwarcie, radzimy abys przeteleportowal sie w bezpieczne miejsce!"
+						wait 10 seconds
+						send "&6**&c&l5"
+						wait 1 second
+						send "&6**&c&l4"
+						wait 1 second
+						send "&6**&c&l3"
+						wait 1 second
+						send "&6**&c&l2"
+						wait 1 second
+						send "&6**&c&l1"
+						wait 1 second
+						set {_real} to "simulate"
+						set {_case} to loop-value
+						set {_player} to player
+						function "open" {{_real} and {_case} and {_player}};
+				else:
+					send "&6**&c&lNie ma takiej skrzynki!"
+					stop
+			else:
+				send "&6**&c&lPodaj nazwe skrzynki!"
+				stop 					
+#Komenda dla graczy
+command /caseinf:
+	trigger:
+		send "&6------------&5GOCASE&6---------------" to player
+		send "&6**&c&lLista komend:"
+		send "&6/caselist - &blista case'ow"
+		send "&6/casesimulator <nazwa skrzynki> -&b symulujesz dana skrzynke!"				
+		send "&6------------&5GOCASEL&6---------------"
+		stop 
+#Wyswietlanie listy przedmiotow w skrzynce#
+command /caseilist <player> <text>:
+	executable by: console
+	trigger:
+		wait 2 ticks
+		set {_num} to 0
+		open chest with 6 rows named "LISTA ITEMKOW" to arg 1
+		set {_pl} to arg 1
+		wait 2 ticks
+		loop {GOCASE::case.%uncoloured arg 2%::*}:			
+			format slot {_num} of {_pl} with 1 of loop-value to close
+			add 1 to {_num}
+#Komenda na reload skryptu, taka dupna trochę, ale...#
+command /casereload:
+	permission: gocase.admin
+	trigger:
+		console command "sk reload %script name%"
+#Komenda pomagajaca zrobienie itemku np. Battle Scarred#
+command /damagei <number>:
+	trigger:
+		if player has permission "damage.i":
+			if executor is player:
+				if player's tool is not air:
+					damage player's tool by arg
+				ELSE:
+					send "&cNieprawidlowy przedmiot!"
+					stop
+			else:
+				send "[&6GOCASE&R]Ta komenda moze byc wykonywana tylko w grze!"		
+#Zmiana nazwy itemku#
+command /itemrename [<text>]:
+	permission: item.rename
+	trigger:
+		if command executor is console:
+			send "[&6GOCASE&R]Ta komenda moze byc wykonywana tylko w grze!" to executor
+			stop
+		if arg 1 is set:
+			if player's tool is not air:
+				set name of player's tool to coloured arg 1
+				send "&6**&c&lNazwa itemku zmieniona!"
+				stop		
+			else:
+				send "&6**&c&lNieprawidlowy przedmiot!"
+				stop
+		else:
+			send "&6**&c&lPodaj nowa nazwe przedmiotu!"
+			stop 
+#Zmiana opisu itemku#
+command /itemlore [<text>]:
+	permission: item.rename
+	trigger:
+		if command executor is console:
+			send "[&6GOCASE&R]Ta komenda moze byc wykonywana tylko w grze!" to executor
+			stop
+		if arg 1 is set:
+			if player's tool is not air:
+				set lore of player's tool to coloured arg 1					
+				send "&6**&c&lOpis itemku zmieniona!"
+				stop		
+			else:
+				send "&6**&c&lNieprawidlowy przedmiot!"
+				stop
+		else:
+			send "&6**&c&lPodaj nowy opis przedmiotu!"
+			stop				
+on load:
+	send "[&6GOCASE&r] Laduje..." to console
+	send "[&6GOCASE&r] Skrypt gotowy do uzycia! Enjoy! //febbe" to console
+	broadcast "&6**&c&lSkrypt na skrzynki zostal przeladowany!"
+	if folder "plugins/GOCASE/" doesn't exists:
+		create folder "plugins/GOCASE"
+	if folder "plugins/GOCASE/cases" doesn't exists:
+		create folder "plugins/GOCASE/cases"
+	if folder "plugins/GOCASE/scripts" doesn't exists:
+		create folder "plugins/GOCASE/scripts"
+	if folder "plugins/GOCASE/settings" doesn't exists:
+		create folder "plugins/GOCASE/settings"
+on unload:
+	send "[&6GOCASE&r] Wylaczam..." to console
+	send "[&6GOCASE&r] Dziekuje za korzystanie! //febbe" to console
+	broadcast "&6**&c&lSkrypt na skrzynki zostal wylaczony!"
+on inventory close:
+	if {GOCASE::wait.%player%} is true:
+		loop all items in inventory of the block at {GOCASE::r.%player%}:
+			if loop-item is not air:
+				add loop-item to {GOCASE::case.%{GOCASE::casename.%player%}%::*}
+		send "&6** &C&LSkrzynka %{GOCASE::casename.%player%}% zostala utworzona/zedytowana!"
+		delete {GOCASE::wait.%player%}
+		delete {GOCASE::casename.%player%}
+		set block at {GOCASE::r.%player%} to air
+		set block 1 meters east block at {GOCASE::r.%player%} to air
+		delete {GOCASE::r.%player%}		
+		stop
+	if {GOCASE::wait4.%player%} is true:
+		wait 1 tick
+		open chest with 3 rows named "&6&l** &a&lSKRZYNKA %{GOCASE::casename.%player%}%" to player
+		set {_num} to 0
+		loop 27 times:
+			if {_num} is  0 or 1 or 2 or 3 or 5 or 6 or 7 or 8 or 18 or 19 or 20 or 21 or 23 or 24 or 25 or 26:			
+				format slot {_num} of player with 1 of Black Stained Glass Pane to close
+			add 1 to {_num}
+		format slot 4 of {_player} with 1 of Powered Rail to close
+		format slot 22 of {_player} with 1 of Powered Rail to close
+		stop
+on rightclick:
+	loop {GOCASE::cases::*}:
+		if name of player's tool is "&5Skrzynka %loop-value%" or "&5Klucz do skrzynki %loop-value%":
+			cancel event
+			if name of player's tool is "&5Skrzynka %loop-value%" or "&5Klucz do skrzynki %loop-value%":
+				cancel event
+				if name of player's tool is "&5Skrzynka %loop-value%":
+					if {GOCASE::case.%loop-value%.key} is false:						
+						remove chest named "&5Skrzynka %loop-value%" from player's tool
+						send "&6**&c&l Za 15 sekund nastapi otwarcie, radzimy abys przeteleportowal sie w bezpieczne miejsce!"
+						wait 10 seconds
+						send "&6**&c&l5"
+						wait 1 second
+						send "&6**&c&l4"
+						wait 1 second
+						send "&6**&c&l3"
+						wait 1 second
+						send "&6**&c&l2"
+						wait 1 second
+						send "&6**&c&l1"
+						wait 1 second
+						broadcast "&6**&c&lGracz &5&l%player%&c&l, otworzyl skrzynke %loop-value%"
+						set {_player} to player
+						set {_case} to loop-value
+						set {_real} to "real"
+						function "open" {{_real} and {_case} and {_player}};
+					else:
+						if player has Tripwire Hook named "&5Klucz do skrzynki %loop-value%":
+							remove Tripwire Hook named "&5Klucz do skrzynki %loop-value%" from player
+							remove chest named "&5Skrzynka %loop-value%" from player
+							send "&6**&c&l Klucz do twojej skrzynki pasuje, za 15 sekund nastapi jej otwrcie, radzimy abys przeteleportowal sie w bezpieczne miejsce!"
+							wait 10 seconds
+							send "&6**&c&l5"
+							wait 1 second
+							send "&6**&c&l4"
+							wait 1 second
+							send "&6**&c&l3"
+							wait 1 second
+							send "&6**&c&l2"
+							wait 1 second
+							send "&6**&c&l1"
+							wait 1 second
+							broadcast "&6**&c&lGracz &5&l%player%&c&l, otworzyl skrzynke %loop-value%"
+							set {_player} to player
+							set {_case} to loop-value
+							set {_real} to "real"
+							function "open" {{_real} and {_case} and {_player}};						
+						else:
+							send "&6**&c&lNie masz klucza do tej skrzynki!"
+							stop
+#Zabezpieczenie przed konfliktami na serwerze#
+on join:
+	delete {GOCASE::wait4.%player%}
+	delete {GOCASE::wait.%player%}
+#Drop#
+#Szanse mozesz odpowiednio modyfikowac#
+on mine stone:
+	loop {GOCASE::cases::*}:
+		if chance of 1%:
+			if player can hold chest:
+				give player chest named "&5Skrzynka %loop-value%"
+				send "&5%player% , &c&lznalazles skrzynke &6%loop-value%&c! &cZnajdz, badz kup  klucz i otworz skrzynke aby wolosowac nagrode!" to player 
+				stop
+			else:
+				give player chest named "&5Skrzynka %loop-value%"
+				send "&5%player% , &c&lznalazles skrzynke &6%loop-value%&c! &cZnajdz, badz kup  klucz i otworz skrzynke aby wolosowac nagrode!" to player  
+				send "&6** &cPrzedmiot zostal upuszczony na ziemie, z powodu braku miejsca w ekwipunku!"
+				stop
+		if chance of 1%:
+			if {GOCASE::case.%loop-value%.key} is false:
+				stop
+			if player can hold Tripwire Hook:
+				give player Tripwire Hook named "&5Klucz do skrzynki %loop-value%"
+				send "&5%player% , &c&lznalazles klucz do skrzynki &6%loop-value%&c! &cZnajdz, badz kup  odpowiednia skrzynke i otworz ja aby wolosowac nagrode!" to player  
+				stop
+			else:
+				give player Tripwire Hook named "&5Klucz do skrzynki %loop-value%"
+				send "&5%player% , &c&lznalazles klucz do skrzynki &6%loop-value%&c! &cZnajdz, badz kup  odpowiednia skrzynke i otworz ja aby wolosowac nagrode!" to player 
+				send "&6** &cPrzedmiot zostal upuszczony na ziemie, z powodu braku miejsca w ekwipunku!"
+				stop
